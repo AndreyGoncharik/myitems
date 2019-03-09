@@ -1,1 +1,225 @@
-!
+<!DOCTYPE html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Items</title>
+    <link rel="stylesheet" href="css.css">
+    
+</head>
+<body>
+    <div class="wraper">
+        <h3 class="h3">Items</h3>
+        <div class="add-new-1">ADD NEW</div>
+
+        <div class="item">
+            <form class="first">
+
+            </form>
+        </div>
+    </div>
+<script>
+
+    window.onload = () => {
+
+        let karDiv = document.querySelector('.first');
+        let newItem = `<div class="item-row">
+                            <input class="inp-name" value="" >
+                            <input type="number" class="inp-val" value="" >
+                            <div class="b1">Save</div>
+                            <div class="b-cancel">Cancel</div>
+                        </div>`; 
+                         
+        // Функц забора данныx из LS и вставки в страницу                    
+        function karQuan(items) { 
+
+            for (k in c[0]) {
+
+                if (JSON.parse(localStorage['Kar'])[0][k] != undefined)  
+                    karDiv.insertAdjacentHTML("beforeEnd", 
+                    `<div class="item-row">
+                        <input class="inp-name" value="${JSON.parse(localStorage['Kar'])[0][k]}" disabled>
+                        <input type="number" class="inp-val" value="${JSON.parse(localStorage['Kar'])[1][k]}" disabled>
+                            <div class="but b2">Edit</div>
+                            <div class="but b3">Save</div>
+                            <div class="but b4">Cancel</div>
+                            <div class="but b5">Del</div>
+                            <div class="but b-plus">+</div>
+                            <div class="but b-minus">-</div>
+                            <div class="but valA">0</div>
+                    </div>`
+                );
+            }
+            items();
+        }
+
+        // Функц изменения карточки
+        function editItemFoo()  {
+            let itemRow = document.querySelectorAll('.first .item-row');
+            itemRow.forEach((el, i) => {
+                
+                let editBut = el.querySelector('.b2');
+                let saveBut = el.querySelector('.b3');
+                let cancelBut = el.querySelector('.b4');
+                let delBut = el.querySelector('.b5');
+                let plusBut = el.querySelector('.b-plus');
+                let minusBut = el.querySelector('.b-minus');
+                let itemBut = el.querySelectorAll('.but');
+
+                // кнопка Edit    
+                editBut.addEventListener("click", function () {
+                    this.parentElement.querySelector('.inp-val').removeAttribute("disabled");
+
+                    itemBut.forEach	((elem) => elem.classList.toggle("active"))   
+                });
+
+                // кнопка Cancel
+                cancelBut.addEventListener("click", function () {
+                    let p = JSON.parse(localStorage['Kar']);                        
+                    this.parentElement.querySelector('.inp-val').setAttribute("disabled", "disabled");
+                    this.parentElement.querySelector('.inp-val').value = p[1][i];
+                    this.parentElement.querySelector('.valA').innerHTML = '';
+
+                    setTimeout(() => {
+                        karDiv.innerHTML = '';
+                            setTimeout(() => {
+                                karQuan(editItemFoo);
+                        }, 300);
+                    }, 300);  
+                });
+
+                // кнопка Save
+                saveBut.addEventListener("click", function () {
+                    let p = JSON.parse(localStorage['Kar']);
+                    let newItem = parseInt(this.parentElement.querySelector('.inp-val').value);
+                    this.parentElement.querySelector('.inp-val').setAttribute("disabled", "disabled");
+
+                    p[1].splice(i, 1, newItem);
+                    let b = JSON.stringify(p);                    
+                    localStorage.setItem("Kar",b);
+
+                    itemBut.forEach	((elem) => elem.classList.toggle("active"))
+                    this.parentElement.querySelector('.valA').innerHTML = '0';   
+                });
+
+                // кнопка Del
+                delBut.addEventListener("click", function () {
+                    let thisName = this.parentElement.querySelector('.inp-name');
+                    let thisVal = this.parentElement.querySelector('.inp-val');
+                    let p = JSON.parse(localStorage['Kar']);
+
+                    p[0].splice(i, 1);
+                    p[1].splice(i, 1);
+                    let b = JSON.stringify(p);                    
+                    localStorage.setItem("Kar",b);
+                    setTimeout(() => {
+                        this.parentNode.classList.add('hide');
+                            setTimeout(() => {
+                                karDiv.innerHTML = '';
+                                    setTimeout(() => {
+                                        karQuan(editItemFoo);
+                                    }, 300);
+                            }, 300);
+                    }, 200);         
+                });
+
+                // кнопка Plus
+                plusBut.addEventListener("click", function () {
+                    let item = this.parentElement.querySelector('.inp-val');
+                    let valItem = this.parentElement.querySelector('.inp-val').value;
+                    let valA = this.parentElement.querySelector('.valA');
+                    let valAText = parseInt(valA.textContent);
+
+                    item.setAttribute("type", "text");
+                    item.setAttribute("value", `${parseInt(valItem) + 1} `);
+
+                    if ( valA.textContent >= 0 )  {
+                        valA.innerHTML = `+${valAText + 1}`;
+                    } else if ( valA.textContent < 0 ) {
+                        valA.innerHTML = `${valAText + 1}`;
+                    }; 
+                });
+
+                // кнопка Minus
+                minusBut.addEventListener("click", function () {
+                    let item = this.parentElement.querySelector('.inp-val');
+                    let valItem = this.parentElement.querySelector('.inp-val').value;
+                    let valA = this.parentElement.querySelector('.valA');
+                    let valAText = parseInt(valA.textContent);
+
+                    item.setAttribute("type", "text");
+                    if ( valItem > 0 ) {
+                        item.setAttribute("value", `${parseInt(valItem) - 1} `);
+                    }
+
+                    if ( valA.textContent > 0 )  {
+                        valA.innerHTML = `+${valAText - 1}`;
+                    } else if ( valA.textContent <= 0 && valItem > 0) {
+                         valA.innerHTML = `${valAText - 1}`;
+                    }; 
+                });
+            });
+        };
+
+        // получение данных из LS
+        let c = JSON.parse(localStorage.getItem("Kar"));
+
+        // проверка на пустой массив в LS
+        if ( c == null ) { 
+            c = [[],[]];
+            localStorage.setItem("Kar", c);
+        } else {            
+            karQuan(editItemFoo);            
+        } 
+
+        // добавление новой карточки
+        document.querySelector('.add-new-1').onclick = () => {
+
+            karDiv.insertAdjacentHTML("afterBegin", newItem);
+            
+            document.querySelector('.first .b1').addEventListener("click", function () {
+                let thisName = this.parentElement.querySelector('.inp-name');
+                let thisVal = this.parentElement.querySelector('.inp-val');
+
+                // проверка заполнения полей    
+                if (thisName.value == '') {
+                    thisName.classList.add("warning-border");
+                    thisName.setAttribute('placeholder', 'Name ?');
+                } else if (thisVal.value == '') {
+                    thisVal.classList.add("warning-border");
+                    thisVal.setAttribute('placeholder', 'Кол-во ?');
+                } else { 
+                    
+                    // добавление новых данных в массив
+                    c[0].push(thisName.value);                    
+                    c[1].push(thisVal.value);
+
+                    let b = JSON.stringify(c);                    
+                    localStorage.setItem("Kar",b);
+
+                    thisName.classList.remove("warning-border");
+                    thisName.setAttribute('placeholder', '');
+                    thisVal.classList.remove("warning-border");
+                    thisVal.setAttribute('placeholder', '')
+
+                    this.remove();
+                    karDiv.innerHTML = '';
+                    setTimeout(() => {
+                        karQuan(editItemFoo);
+                    }, 300);                                       
+                }               
+            });
+
+            document.querySelector('.first .b-cancel').addEventListener("click", function () {
+                this.parentNode.classList.add('hide');
+                setTimeout(() => {
+                    this.parentNode.remove();
+                }, 500);
+            });
+        }
+
+    }
+</script>
+
+</body>
+</html>
