@@ -189,7 +189,7 @@ textarea:disabled, input:disabled {
     right: -50px;
 }
 .item-row .b-plus.active {
-    right: 30px;
+    right: 20px;
 }
 .item-row .b-minus {
     right: -50px;
@@ -295,7 +295,11 @@ textarea:disabled, input:disabled {
                             setTimeout(() => {
                                 karQuan(editItemFoo);
                         }, 300);
-                    }, 300);  
+                    }, 300); 
+                    
+                    this.parentElement.classList.toggle("row-edit"); 
+                    this.parentElement.querySelector('.valA').innerHTML = '0';
+                    itemBut.forEach	((elem) => elem.classList.toggle("active"));
                 });
 
                 // кнопка Save
