@@ -63,8 +63,9 @@ div {
     border-bottom: 1px solid grey;
     outline: none;
     height: 30px;
-    width: 100px;
+    width: 75px;
     font-size: 24px;
+    margin: 0 20px;
 }
 
 input::-webkit-outer-spin-button,
@@ -85,17 +86,22 @@ textarea:disabled, input:disabled {
     border-bottom: 1px solid red !important;
 }
 .item-row {
-    height: 80px;
+    height: 30px;
     width: 320px;
     background-color: #fff;
     border: 1px solid #c2c2c2;
     border-radius: 4px;
     margin: 5px auto;
-    padding: 15px 30px;
+    padding: 15px 0;
     position: relative;
     opacity: 1;
     transition: all .3s;
 }
+
+.row-edit {
+    height: 80px;
+}
+
 .hide {
     opacity: 0;
     height: 0px;
@@ -107,21 +113,43 @@ textarea:disabled, input:disabled {
 .item-row .but {
     width: 40px;
     height: 40px;
+    min-width: 40px;
     cursor: pointer;
     position: absolute;
-    transition: all .7s;
-    bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+    bottom: 5px;
     background-color: #c2c2c2;
+    border-radius: 50%;
+    font-size: 14px;
+    padding: 0;
+    overflow: hidden;
+    color: rgba(0, 0, 0, 0.52);
+    background: rgba(158,158,158,.15);
+    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,.12), 0 1px 1px 0 rgba(0,0,0,.24);
+    line-height: normal;
+    transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+    transition: all .7s;
+    outline: none;
+    cursor: pointer;
+}
 
-
+.item-row .but:active {
+    box-shadow: 0 0 8px rgba(0,0,0,.18), 0 8px 16px rgba(0,0,0,.36);
+    background-color: rgba(158,158,158,.4);
+    color: rgba(0, 0, 0, 0.92);
 }
 
 .item-row .b2 {
-    right: 5px;
+    right: 10px;
+    top: 5px;
 }
 
 .item-row .b2.active {
     right: -50px;
+    top: 5px;
+
 }
 
 .item-row .b3 {
@@ -138,28 +166,38 @@ textarea:disabled, input:disabled {
 }
 .item-row .b5 {
     left: -50px;
+    top: 5px;
 }
 .item-row .b5.active {
     left: 5px;
+    top: 5px;
 }
 .item-row .b-plus {
     right: -50px;
 }
 .item-row .b-plus.active {
-    right: 55px;
+    right: 30px;
 }
 .item-row .b-minus {
     right: -50px;
 }
 .item-row .b-minus.active {
-    right: 105px;
+    right: 80px;
 }
 .item-row .valA {
-    right: -50px;
-    background-color: #fff;
+    font-weight: 600;
+    font-size: 12px;
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 50%;
+    background-color: #ff4081;
+    color: #fff;
+    top: 12px;
+    right: -35px;
 }
 .item-row .valA.active {
-    right: 155px;
+    right: 15px;
 }
 
     </style>
@@ -181,7 +219,7 @@ textarea:disabled, input:disabled {
     window.onload = () => {
 
         let karDiv = document.querySelector('.first');
-        let newItem = `<div class="item-row">
+        let newItem = `<div class="item-row row-edit">
                             <input class="inp-name" value="" >
                             <input type="number" class="inp-val" value="" >
                             <div class="b1">Save</div>
@@ -227,6 +265,7 @@ textarea:disabled, input:disabled {
                 // кнопка Edit    
                 editBut.addEventListener("click", function () {
                     this.parentElement.querySelector('.inp-val').removeAttribute("disabled");
+                    this.parentElement.classList.toggle("row-edit");
 
                     itemBut.forEach	((elem) => elem.classList.toggle("active"))   
                 });
@@ -257,6 +296,7 @@ textarea:disabled, input:disabled {
                     localStorage.setItem("Kar",b);
 
                     itemBut.forEach	((elem) => elem.classList.toggle("active"))
+                    this.parentElement.classList.toggle("row-edit");
                     this.parentElement.querySelector('.valA').innerHTML = '0';   
                 });
 

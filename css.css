@@ -86,7 +86,7 @@ textarea:disabled, input:disabled {
     padding: 15px 30px;
     position: relative;
     opacity: 1;
-    transition: all .3s;
+    transition: all .2s;
 }
 .hide {
     opacity: 0;
