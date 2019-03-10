@@ -232,25 +232,31 @@ textarea:disabled, input:disabled {
 <script>
 
     window.onload = () => {
+        const karDiv = document.querySelector('.first');
 
-        let karDiv = document.querySelector('.first');
-        let newItem = `<div class="item-row row-edit">
-                            <input class="inp-name" value="" >
-                            <input type="number" class="inp-val" value="" >
-                            <div class="b1 but">Save</div>
-                            <div class="b-cancel but">Cancel</div>
-                        </div>`; 
-                         
+        // проверка на пустой массив в LS
+        if ( localStorage.getItem("Kar") == null ) { 
+            let c = JSON.parse(localStorage.getItem("Kar"));
+            c = [[],[]];
+            let b = JSON.stringify(c);
+            localStorage.setItem("Kar", b);
+        } else {            
+            karQuan(editItemFoo);            
+        }
+
+        let c = JSON.parse(localStorage.getItem("Kar"));
+        console.log(c[0]);                 
         // Функц забора данныx из LS и вставки в страницу                    
-        function karQuan(items) { 
+        function karQuan(items) {  
+            let c = JSON.parse(localStorage.getItem("Kar"));
+            // let c = JSON.parse(localStorage.getItem("Kar")) ; 
+            console.log(c[0]);         
 
             for (k in c[0]) {
-
-                if (JSON.parse(localStorage['Kar'])[0][k] != undefined)  
                     karDiv.insertAdjacentHTML("beforeEnd", 
                     `<div class="item-row">
-                        <input class="inp-name" value="${JSON.parse(localStorage['Kar'])[0][k]}" disabled>
-                        <input type="number" class="inp-val" value="${JSON.parse(localStorage['Kar'])[1][k]}" disabled>
+                        <input class="inp-name" value="${c[0][k]}" disabled>
+                        <input type="number" class="inp-val" value="${c[1][k]}" disabled>
                             <div class="but b2">Edit</div>
                             <div class="but b3">Save</div>
                             <div class="but b4">Cancel</div>
@@ -258,14 +264,14 @@ textarea:disabled, input:disabled {
                             <div class="but b-plus">+</div>
                             <div class="but b-minus">-</div>
                             <div class="but valA">0</div>
-                    </div>`
-                );
-            }
+                    </div>`);
+                }
             items();
         }
 
         // Функц изменения карточки
         function editItemFoo()  {
+            let c = JSON.parse(localStorage.getItem("Kar"));
             let itemRow = document.querySelectorAll('.first .item-row');
             itemRow.forEach((el, i) => {
                 
@@ -294,9 +300,9 @@ textarea:disabled, input:disabled {
 
                     setTimeout(() => {
                         karDiv.innerHTML = '';
-                            setTimeout(() => {
+                            // setTimeout(() => {
                                 karQuan(editItemFoo);
-                        }, 300);
+                            // }, 300);
                     }, 300); 
                     
                     this.parentElement.classList.toggle("row-edit"); 
@@ -329,15 +335,15 @@ textarea:disabled, input:disabled {
                     p[1].splice(i, 1);
                     let b = JSON.stringify(p);                    
                     localStorage.setItem("Kar",b);
-                    setTimeout(() => {
+                    // setTimeout(() => {
                         this.parentNode.classList.add('hide');
                             setTimeout(() => {
                                 karDiv.innerHTML = '';
-                                    setTimeout(() => {
+                                    // setTimeout(() => {
                                         karQuan(editItemFoo);
-                                    }, 300);
+                                    // }, 300);
                             }, 300);
-                    }, 200);         
+                    // }, 200);         
                 });
 
                 // кнопка Plus
@@ -376,24 +382,32 @@ textarea:disabled, input:disabled {
                     }; 
                 });
             });
-        };
-
-        // получение данных из LS
-        let c = JSON.parse(localStorage.getItem("Kar"));
-
-        // проверка на пустой массив в LS
-        if ( c == null ) { 
-            c = [[],[]];
-            localStorage.setItem("Kar", c);
-        } else {            
-            karQuan(editItemFoo);            
-        } 
+        }; 
 
         // добавление новой карточки
+        let newItem = `<div class="item-row row-edit new-raw">
+                            <input class="inp-name" value="" >
+                            <input type="number" class="inp-val" value="" >
+                            <div class="b1 but">Save</div>
+                            <div class="b-cancel but">Cancel</div>
+                        </div>`; 
+
         document.querySelector('.add-new-1').onclick = () => {
+            
+            karDiv.innerHTML = '';
+            karQuan(editItemFoo);
 
             karDiv.insertAdjacentHTML("afterBegin", newItem);
-            
+
+            // cancel новой карточки
+            document.querySelector('.b-cancel').addEventListener("click", function () {
+                document.querySelector('.new-raw').classList.add('hide');
+                    setTimeout(() => {
+                        document.querySelector('.new-raw').remove();
+                    }, 500);
+            });
+
+            // сохранение новой карточки
             document.querySelector('.first .b1').addEventListener("click", function () {
                 let thisName = this.parentElement.querySelector('.inp-name');
                 let thisVal = this.parentElement.querySelector('.inp-val');
@@ -406,6 +420,7 @@ textarea:disabled, input:disabled {
                     thisVal.classList.add("warning-border");
                     thisVal.setAttribute('placeholder', 'Кол-во ?');
                 } else { 
+                    let c = JSON.parse(localStorage.getItem("Kar"));
                     
                     // добавление новых данных в массив
                     c[0].push(thisName.value);                    
@@ -419,22 +434,11 @@ textarea:disabled, input:disabled {
                     thisVal.classList.remove("warning-border");
                     thisVal.setAttribute('placeholder', '')
 
-                    this.remove();
                     karDiv.innerHTML = '';
-                    setTimeout(() => {
-                        karQuan(editItemFoo);
-                    }, 300);                                       
+                    karQuan(editItemFoo);
                 }               
             });
-
-            document.querySelector('.first .b-cancel').addEventListener("click", function () {
-                this.parentNode.classList.add('hide');
-                setTimeout(() => {
-                    this.parentNode.remove();
-                }, 500);
-            });
         }
-
     }
 </script>
 
